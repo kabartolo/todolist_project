@@ -1,6 +1,7 @@
 require 'bundler/setup'
 require 'minitest/autorun'
 require 'minitest/reporters'
+require 'date'
 Minitest::Reporters.use!
 
 require_relative '../lib/todolist_project'
@@ -18,7 +19,25 @@ class TodoListTest < MiniTest::Test
     @list.add(@todo3)
   end
 
+  def test_no_due_date
+    assert_nil(@todo1.due_date)
+  end
+
+  def test_due_date
+    due_date = Date.today + 3
+    @todo2.due_date = due_date
+    assert_equal(@todo2.due_date, due_date)
+  end
+
   def test_to_a
+    @todo2.due_date = Date.new(2017, 4, 15)
+    output = <<-OUTPUT.chomp.gsub(/^\s+/, '')
+    ---- Today's Todos ----
+    [ ] Buy milk
+    [ ] Clean room (Due: Saturday April 15)
+    [ ] Go to gym
+    OUTPUT
+    
     assert_equal(@todos, @list.to_a)
   end
 
